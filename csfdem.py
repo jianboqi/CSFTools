@@ -179,7 +179,7 @@ if __name__ == "__main__":
     start = time.clock()
     print("Reading data...")
     # read point cloud
-    inFile = laspy.file.File(input_las_file, mode='r')
+    inFile = laspy.read(input_las_file)
     # x y z of each point
     xyz_total = np.vstack((inFile.x, inFile.y, inFile.z)).transpose()
     classification = inFile.classification

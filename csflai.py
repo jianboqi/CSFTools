@@ -105,7 +105,7 @@ if __name__ == "__main__":
     print("Method:", method)
     print("Reading data...")
     # read point cloud
-    inFile = laspy.file.File(input_las_file, mode='r')
+    inFile = laspy.read(input_las_file)
     # x y z of each point
     if method == "CEI": # CEI method need original Z value
         oinFile = laspy.file.File(args.originlas, mode='r')

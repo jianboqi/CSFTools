@@ -46,7 +46,7 @@ if __name__ == "__main__":
     start = time.clock()
     print("Reading data...")
     # read point cloud
-    inFile = laspy.file.File(input_las_file, mode='r')
+    inFile = laspy.read(input_las_file)
     # x y z of each point
     xyz_total = np.vstack((inFile.x, inFile.y, inFile.z)).transpose()
     point_number = len(xyz_total)
@@ -74,10 +74,10 @@ if __name__ == "__main__":
     joblib.Parallel(n_jobs=joblib.cpu_count(), max_nbytes=1e4)(joblib.delayed(sub_fun_height)(delta_xyz, zarr, demdata, i,
                                                         width, height, resolution, seg_size)
                                        for i in range(0, seg_num))
-    out_File = laspy.file.File(output_las_file, mode='w', header=inFile.header)
+    out_File = laspy.LasData(inFile.header)
     out_File.points = inFile.points
     out_File.z = zarr
-    out_File.close()
+    out_File.write(output_las_file)
     print("Done.")
     del zarr
     try:

@@ -26,6 +26,7 @@ def sub_fun_classify(_fieldList, _threshold, _class_arr, _seg_index, _seg_size):
         else:
             _class_arr[i] = 1
 
+
 if __name__ == "__main__":
     # parameter handling
     parse = argparse.ArgumentParser()
@@ -44,7 +45,7 @@ if __name__ == "__main__":
     start = time.clock()
     print("Reading data...")
     # read point cloud
-    inFile = laspy.file.File(input_las_file, mode='r')
+    inFile = laspy.read(input_las_file)
     # field list
     fieldList = []
     if field in ("x", "X"):
@@ -84,10 +85,10 @@ if __name__ == "__main__":
     joblib.Parallel(n_jobs=joblib.cpu_count(), max_nbytes=1e4)(joblib.delayed(sub_fun_classify)
                                                                (fieldList, threshold, class_arr, i, seg_size)
                                                                 for i in range(0, seg_num))
-    out_File = laspy.file.File(output_las_file, mode='w', header=inFile.header)
+    out_File = laspy.LasData(inFile.header)
     out_File.points = inFile.points
-    out_File.set_classification(class_arr.tolist())
-    out_File.close()
+    out_File.classification = class_arr.tolist()
+    out_File.write(output_las_file)
     print("Done.")
     del class_arr
     try:

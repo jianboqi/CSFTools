@@ -37,25 +37,25 @@ if __name__ == "__main__":
     if args.classify_threshold is not None:
         csf.params.class_threshold = args.classify_threshold
 
-    input_File = laspy.file.File(input_las_file, mode='r')
+    input_File = laspy.read(input_las_file)
     xyz = np.vstack((input_File.x, input_File.y, input_File.z)).transpose()
     csf.setPointCloud(xyz)
     ground = CSF.VecInt()
     non_ground = CSF.VecInt()
     csf.do_filtering(ground, non_ground)
     points = input_File.points
-    out_File = laspy.file.File(output_las_file, mode='w', header=input_File.header)
+    out_File = laspy.LasData(input_File.header)
     if args.save_mode == "ground": # save ground part
         ground_points = points[ground]
         out_File.points = ground_points
         classification = [2 for i in range(0, len(ground))]  # 2 for ground
-        out_File.set_classification(classification)
+        out_File.classification = classification
 
     if args.save_mode == "non_ground":
         non_ground_points = points[non_ground]
         out_File.points = non_ground_points
         classification = [1 for i in range(0, len(non_ground))]  # 1 for non-ground
-        out_File.set_classification(classification)
+        out_File.classification = classification
 
     if args.save_mode == "all":
         out_File.points = points
@@ -64,9 +64,9 @@ if __name__ == "__main__":
             classification[ground[i]] = 2
         for i in range(0, len(non_ground)):
             classification[non_ground[i]] = 1
-        out_File.set_classification(classification)
+        out_File.classification = classification
 
-    out_File.close()
+    out_File.write(output_las_file)
 
     end = time.clock()
     print("Done.")

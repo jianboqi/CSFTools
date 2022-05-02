@@ -64,6 +64,7 @@ def save_as_random_color_img(_dataarr, filepath):
                 colormap[_dataarr[row][col]] = color
     mahotas.imsave(filepath, re)
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", help="Input CHM file.",required=True)
